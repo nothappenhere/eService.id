@@ -79,7 +79,7 @@ export const loginUser = async (req, res, next) => {
 
     // Generate token JWT
     const token = jwt.sign(
-      { userId: user.user_id, email: user.email, role: user.role },
+      { user_id: user.user_id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' },
     )
@@ -88,7 +88,7 @@ export const loginUser = async (req, res, next) => {
       message: 'Login successful.',
       token,
       data: {
-        id: user.user_id,
+        user_id: user.user_id,
         full_name: user.full_name,
         email: user.email,
         role: user.role,
@@ -111,7 +111,7 @@ export const getCurrentUser = async (req, res) => {
 
     const [rows] = await db
       .promise()
-      .query('SELECT id, full_name, email, role FROM users WHERE id = ?', [userId])
+      .query('SELECT user_id, full_name, email, role FROM users WHERE user_id = ?', [userId])
 
     if (rows.length === 0) return res.status(404).json({ error: 'User not found.' })
 
@@ -120,4 +120,3 @@ export const getCurrentUser = async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve user.' })
   }
 }
-

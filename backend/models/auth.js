@@ -7,7 +7,7 @@ import {
   getCurrentUser,
   // checkEmailExist,
   // resetPasswordUser,
-} from '../controllers/usersController.js'
+} from '../controllers/authController.js'
 import {
   validateLogin,
   validateRegister,
@@ -17,15 +17,15 @@ import {
 import { authenticateToken } from '../middlewares/authMiddleware.js'
 
 //* POST user register
-// Route untuk registrasi pengguna dengan validasi input
+//? Route untuk registrasi pengguna dengan validasi input
 router.post('/auth/register/:role', validateRegister, registerUser)
 
 //* POST user login
-// Route untuk login pengguna dengan validasi input
+//? Route untuk login pengguna dengan validasi input
 router.post('/auth/login', validateLogin, loginUser)
 
 //* GET user info
-// Route untuk mendapatkan info user yang sedang login
+//? Route untuk mendapatkan info user yang sedang login
 router.get('/auth/me', authenticateToken, getCurrentUser)
 
 export default router
