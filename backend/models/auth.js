@@ -5,24 +5,31 @@ import {
   loginUser,
   registerUser,
   getCurrentUser,
-  // checkEmailExist,
-  // resetPasswordUser,
+  checkEmailExist,
+  resetPasswordUser,
 } from '../controllers/authController.js'
 import {
   validateLogin,
   validateRegister,
-  // checkEmail,
-  // validateResetPassword,
+  validateResetPassword,
 } from '../middlewares/authValidation.js'
 import { authenticateToken } from '../middlewares/authMiddleware.js'
 
 //* POST user register
-//? Route untuk registrasi pengguna dengan validasi input
+//? Route untuk registrasi pengguna
 router.post('/auth/register/:role', validateRegister, registerUser)
 
 //* POST user login
-//? Route untuk login pengguna dengan validasi input
+//? Route untuk login pengguna
 router.post('/auth/login', validateLogin, loginUser)
+
+//* POST Check email existence
+//? Route untuk memeriksa apakah email sudah terdaftar
+router.post('/auth/check-email', checkEmailExist)
+
+//* POST reset password
+//? Route untuk reset password
+router.post('/auth/reset-password', validateResetPassword, resetPasswordUser)
 
 //* GET user info
 //? Route untuk mendapatkan info user yang sedang login

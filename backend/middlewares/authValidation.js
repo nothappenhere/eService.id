@@ -12,7 +12,7 @@ const handleValidationErrors = (req, res, next) => {
 
 // Validasi registrasi
 export const validateRegister = [
-  param('role').isIn(['admin', 'warga']).withMessage('Invalid role.'),
+  param('role').isIn(['admin', 'agency', 'citizen']).withMessage('Invalid role.'),
   body('full_name')
     .notEmpty()
     .withMessage('Full Name is required.')
@@ -35,12 +35,6 @@ export const validateLogin = [
     .withMessage('Password is required.')
     .isLength({ min: 8 })
     .withMessage('Password must be at least 8 characters long.'),
-  handleValidationErrors,
-]
-
-// Validasi cek email
-export const checkEmail = [
-  body('email').isEmail().withMessage('Invalid email format.'),
   handleValidationErrors,
 ]
 

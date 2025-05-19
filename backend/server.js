@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import helmet from 'helmet'
 import morgan from 'morgan'
 
-import users from './models/users.js'
+import auth from './models/auth.js'
 import errorHandler from './middlewares/errorHandler.js'
 import notFound from './middlewares/notFound.js'
 
@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(morgan('dev')) // Log HTTP requests
 
 //* Routes
-app.use('/api', users)
+app.use('/api', auth)
 
 //* Error Handling
 app.use(notFound)

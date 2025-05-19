@@ -53,7 +53,6 @@ import { RouterLink } from 'vue-router'
 
         <div class="grid grid-cols-2 gap-4 md:grid-cols-1 lg:grid-cols-2">
           <img alt="" src="/amazon-store.jpg" class="h-40 w-full object-cover sm:h-56 md:h-full" />
-
           <img alt="" src="/skill-builder.png" class="h-20 w-full object-cover sm:h-56 md:h-full" />
         </div>
       </div>

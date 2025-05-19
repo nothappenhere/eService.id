@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { reactive } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useToast } from 'vue-toastification'
@@ -11,61 +11,63 @@ const resetCredentials = reactive({
   email: '',
   password: '',
   isEmailValid: false,
+  isSubmitting: false,
 })
 
 const toast = useToast()
 const toastOpt = useToastOption()
 
 const checkEmailExist = async () => {
+  if (!resetCredentials.email) {
+    return toast.error('All fields are required!', toastOpt.toastOptions)
+  }
+
   try {
-    const response = await axios.post('/api/check-email', {
+    resetCredentials.isSubmitting = !resetCredentials.isSubmitting
+    // await new Promise((resolve) => setTimeout(resolve, 3000))
+
+    const response = await axios.post('http://localhost:8000/api/auth/check-email', {
       email: resetCredentials.email,
     })
 
     if (response.data.exists) {
-      toast.success('Email is valid, please enter your new password.')
-      resetCredentials.isEmailValid = true
-    } else {
-      toast.info('Invalid credentials. Please check your email address.')
+      toast.success('Valid email address, please enter new password.', toastOpt.toastOptions)
+      resetCredentials.isEmailValid = !resetCredentials.isEmailValid
     }
   } catch (error) {
-    if (error.response && error.response.data.error) {
-      toast.error(error.response.data.error) // Pesan error dari server
-    } else {
-      toast.error('Something went wrong, please try again.')
-    }
+    toast.info('Invalid email address, please enter a valid email.', toastOpt.toastOptions)
+  } finally {
+    resetCredentials.isSubmitting = !resetCredentials.isSubmitting
   }
 }
 
 const handleSubmit = async () => {
   if (!resetCredentials.email || !resetCredentials.password) {
-    return toast.error('All fields are required.')
-  } else if (!resetCredentials.email.includes('@')) {
-    return toast.error("Invalid email format, must be include '@' sign.")
+    return toast.error('All fields are required!', toastOpt.toastOptions)
   }
   if (resetCredentials.password.length < 8) {
-    return toast.error('Password must be at least 8 characters long.')
+    return toast.error('Password must be at least 8 characters.', toastOpt.toastOptions)
   }
 
-  const newCredential = {
-    email: resetCredentials.email,
-    password: resetCredentials.password,
+  const newCredentials = {
+    ...resetCredentials,
   }
 
   try {
-    await axios.post('/api/resetCredentials-password', newCredential)
+    resetCredentials.isSubmitting = !resetCredentials.isSubmitting
+    // await new Promise((resolve) => setTimeout(resolve, 3000))
+
+    await axios.post('http://localhost:8000/api/auth/reset-password', newCredentials)
 
     router.push('/login')
-    toast.success('Password resetCredentials successfully.')
+    toast.success('Password reset successful.')
   } catch (error) {
-    if (error.response && error.response.data.error) {
-      toast.error(error.response.data.error) // Pesan error dari server
-    } else {
-      toast.error('Something went wrong, please try again.')
-    }
+    toast.error('Something went wrong, please try again.', toastOpt.toastOptions)
   } finally {
+    // Reset input
     resetCredentials.email = ''
     resetCredentials.password = ''
+    resetCredentials.isSubmitting = !resetCredentials.isSubmitting
   }
 }
 </script>
@@ -75,10 +77,9 @@ const handleSubmit = async () => {
     <div class="container m-auto max-w-lg py-14">
       <div class="bg-white px-6 py-8 mb-4 rounded-xl m-4 md:m-0">
         <form @submit.prevent="handleSubmit">
-          <img class="h-20 w-auto m-auto mb-4" :src="logo" alt="Vue Jobs" />
-          <h2 class="text-3xl text-center font-semibold mb-10">Reset Password</h2>
+          <img class="h-20 w-auto m-auto" :src="logo" alt="Vue Jobs" />
+          <h2 class="text-3xl text-center font-bold mb-8">Set a New Password</h2>
 
-          <!-- Email Input -->
           <div class="mb-2">
             <i class="fa-solid fa-envelope me-2"></i>
             <label class="text-gray-700 font-bold mb-4">Email Address</label>
@@ -91,10 +92,9 @@ const handleSubmit = async () => {
             />
           </div>
 
-          <!-- Password Input -->
           <div class="mb-4" v-if="resetCredentials.isEmailValid">
             <i class="fa-solid fa-lock me-2"></i>
-            <label class="text-gray-700 font-bold mb-2">New Password</label>
+            <label class="text-gray-700 font-bold">New Password</label>
             <input
               type="password"
               v-model="resetCredentials.password"
@@ -104,30 +104,38 @@ const handleSubmit = async () => {
             />
           </div>
 
-          <!-- Email Input -->
+          <!-- Check Email Button -->
           <button
             v-if="!resetCredentials.isEmailValid"
-            class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 w-full"
+            :class="[
+              !resetCredentials.isSubmitting
+                ? 'bg-[#ff9900] hover:bg-[#e27200]  text-white font-bold py-4 px-4 w-full cursor-pointer'
+                : 'bg-[#ffd246]  text-white font-bold py-4 px-4 w-full',
+            ]"
             type="button"
             @click="checkEmailExist"
           >
             Check Email
           </button>
 
-          <!-- Password Input -->
+          <!-- Reset Password Button -->
           <button
             v-else
-            class="bg-green-600 hover:bg-green-700 rounded-sm text-white font-bold py-4 px-4 w-full"
+            :class="[
+              !resetCredentials.isSubmitting
+                ? 'bg-[#ff9900] hover:bg-[#e27200]  text-white font-bold py-4 px-4 w-full cursor-pointer'
+                : 'bg-[#ffd246]  text-white font-bold py-4 px-4 w-full',
+            ]"
             type="submit"
           >
-            ResetCredentials Password
+            Reset Password
           </button>
 
           <div class="flex justify-start items-center mt-5">
             <i class="fa fa-solid fa-arrow-left me-2 mt-[0.2rem]"></i>
-            <RouterLink to="/login" class="text-gray-500 hover:text-gray-600"
-              >Back to Login</RouterLink
-            >
+            <RouterLink to="/login" class="text-gray-500 hover:text-gray-600">
+              Return to Login Page
+            </RouterLink>
           </div>
         </form>
       </div>

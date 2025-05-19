@@ -94,12 +94,12 @@ const logout = () => {
                   'px-3',
                   'py-2',
                 ]"
-                >Sign in</RouterLink
+                >Log in</RouterLink
               >
               <RouterLink
-                to="/register/user"
+                to="/register/citizen"
                 :class="[
-                  isActiveLink('/register/user')
+                  isActiveLink('/register/citizen') || isActiveLink('/register/agency')
                     ? 'bg-[#134879] hover:bg-[#163d64] hover:border-[#163d64] border-2 border-[#134879]'
                     : 'hover:bg-[#163d64] border-2 border-[#163d64]',
                   'text-white',
